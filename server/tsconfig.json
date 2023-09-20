@@ -1,0 +1,33 @@
+{
+  "ts-node": {
+    "files": true,
+    "transpileOnly": true,
+  },
+  "compilerOptions": {
+    "target": "esnext",
+    "module": "CommonJS",
+    "strict": true,
+    "jsx": "preserve",
+    "importHelpers": true,
+    "moduleResolution": "node",
+    "skipLibCheck": true,
+    "esModuleInterop": true,
+    "allowSyntheticDefaultImports": true,
+    "sourceMap": true,
+    "baseUrl": ".",
+    "outDir": "dist",
+    "declaration": true,// 是否生成声明文件
+    "declarationDir": "dist/type",// 声明文件打包的位置
+    "composite": true,
+    "lib": [
+      "esnext"
+    ],
+    "types": [
+      "node"
+    ],
+  },
+  "include": [
+    "src/**/*.ts",
+  ],
+}
+
