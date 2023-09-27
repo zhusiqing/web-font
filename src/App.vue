@@ -15,6 +15,7 @@ interface FontType {
 const defaultFonts = ref<FontType[]>([])
 const fonts = ref<FontType[]>([])
 const selectedFonts = ref<FontType[]>([])
+const id = ref('')
 
 
 const handleHttpRequest = async (options: UploadRequestOptions) => {
@@ -29,6 +30,8 @@ const handleHttpRequest = async (options: UploadRequestOptions) => {
     return
   }
   console.log(res);
+  defaultFonts.value = res.data?.fileList || []
+  id.value = res.data?.id || ''
   // 目前测试本地只支持woff/otf格式的字体加载，其他加载失败可能要在服务端转下
   const fontUrl = URL.createObjectURL(options.file)
   const font = new FontFace('lmParse', `url('${fontUrl}')`)
@@ -73,12 +76,21 @@ const findFont = (font: FontType) => {
   return selectedFonts.value.find(el => el.unicode === font.unicode)
 }
 const isActive = (font: FontType) => !!findFont(font)
-const handleExport = () => {
+const handleExport = async () => {
   if (!selectedFonts.value.length) {
     ElMessage.error('当前导出和原字体文件一致，无需处理')
     return
   }
   console.log(selectedFonts);
+  const a = document.createElement('a')
+  const res = await fetch(`/api/font?id=${id.value}&text=${selectedFonts.value.map(el => el.text).join('')}`)
+  a.download = res.headers.get('filename') || ''
+  a.href = URL.createObjectURL(await res.blob())
+  a.click()
+  setTimeout(() => {
+    URL.revokeObjectURL(a.href)
+    a.remove()
+  }, 0);
 }
 </script>
 

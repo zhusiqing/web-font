@@ -7,11 +7,22 @@ import path from 'path'
 import router from './router'
 import { startTask, stopTask } from './utils/cron'
 import { addExitTask } from './utils/exit'
+import { responseHandle } from './utils/responseHandle'
 
 const port = 5555
 
 const app = new Koa()
 app.proxy = true
+app.use(async (ctx, next) => {
+  try {
+    await next()
+  } catch (error: any) {
+    console.log('catch error: ', error);
+    if (error?.code) {
+      ctx.body = responseHandle(null, error.code, error.message)
+    }
+  }
+})
 app.use(koaHelmet())
 app.use(koaStatic(path.join(__dirname, '../../dist')))
 app.use(kaoBodyParser({
@@ -19,6 +30,11 @@ app.use(kaoBodyParser({
 }))
 
 app.use(router.routes()).use(router.allowedMethods())
+
+app.on('error', (err) => {
+  console.log(err);
+})
+
 app.listen(port, () => {
   console.log(`http://localhost:${port}`);
   startTask()
@@ -26,5 +42,3 @@ app.listen(port, () => {
     stopTask()
   })
 })
-
-
