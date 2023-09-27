@@ -6,13 +6,13 @@ import { ElMessage, ElButton } from 'element-plus'
 import type { UploadRequestOptions } from 'element-plus'
 import FontBlock from './components/FontBlock.vue'
 import FontBlockList from './components/FontBlockList.vue'
-import { resFont } from './mock'
+// import { resFont } from './mock'
 interface FontType {
   text: string;
   unicode: number;
 }
 
-const defaultFonts = ref(resFont.data)
+const defaultFonts = ref<FontType[]>([])
 const fonts = ref<FontType[]>([])
 const selectedFonts = ref<FontType[]>([])
 
@@ -44,6 +44,10 @@ const handleHttpRequest = async (options: UploadRequestOptions) => {
 }
 const handleSearch = (text: string) => {
   const textArr = text.split('')
+  if (!defaultFonts.value?.length) {
+    ElMessage.warning('请先上传文件再操作')
+    return
+  }
   if (textArr?.length) {
     fonts.value = defaultFonts.value.filter(font => textArr.includes(font.text))
   } else {

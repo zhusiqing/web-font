@@ -5,6 +5,8 @@ import koaStatic from 'koa-static'
 import koaProxy from 'koa-proxies'
 import path from 'path'
 import router from './router'
+import { startTask, stopTask } from './utils/cron'
+import { addExitTask } from './utils/exit'
 
 const port = 5555
 
@@ -19,4 +21,10 @@ app.use(kaoBodyParser({
 app.use(router.routes()).use(router.allowedMethods())
 app.listen(port, () => {
   console.log(`http://localhost:${port}`);
+  startTask()
+  addExitTask(() => {
+    stopTask()
+  })
 })
+
+
