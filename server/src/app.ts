@@ -17,9 +17,6 @@ app.use(kaoBodyParser({
 }))
 
 app.use(router.routes()).use(router.allowedMethods())
-app.use((ctx) => {
-  ctx.body = '111111222333444444'
-})
 app.listen(port, () => {
   console.log(`http://localhost:${port}`);
 })

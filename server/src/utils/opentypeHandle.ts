@@ -1,7 +1,7 @@
 import opentype from 'opentype.js'
 
-opentype.load('./src/assets/test.otf', (err, font) => {
-  if (err) throw err;
+export const parseFontFile = async (path: string) => {
+  const font = await opentype.load(path)
   if (!font) {
     return
   }
@@ -10,12 +10,15 @@ opentype.load('./src/assets/test.otf', (err, font) => {
   for (let index = 0; index < len; index++) {
     const element = font.glyphs.get(index) || {};
     if (element.unicode) {
-      charStrArr.push({
-        text: String.fromCharCode(element.unicode),
+      const text = String.fromCharCode(element.unicode).trim()
+      text && charStrArr.push({
+        text,
         unicode: element.unicode
       })
     }
 
   }
-  console.log(len)
-})
+  return charStrArr
+}
+
+
